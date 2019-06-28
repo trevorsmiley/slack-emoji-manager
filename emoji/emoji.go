@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/trevorsmiley/slack"
+	"github.com/nlopes/slack"
 )
 
 const (
