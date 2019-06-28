@@ -2,12 +2,14 @@ package emoji
 
 import (
 	"fmt"
-	"github.com/nlopes/slack"
+	"io/ioutil"
 	"net/url"
 	"path/filepath"
 	"slack-emoji-manager/utils"
 	"sort"
 	"strings"
+
+	"github.com/trevorsmiley/slack"
 )
 
 const (
@@ -162,4 +164,32 @@ func splitEmojis(emojis map[string]string) (map[string]Emoji, map[string]Alias) 
 
 func isAlias(uri string) bool {
 	return strings.HasPrefix(uri, "alias")
+}
+
+func UploadEmoji(filename, token string) error {
+	api := slack.New(token)
+
+	return uploadEmoji(filename, api)
+
+}
+
+func uploadEmoji(filename string, api *slack.Client) error {
+	emojiName := utils.GetFileNameWithoutExtension(filepath.Base(filename))
+	return api.AddEmoji(filename, emojiName)
+}
+
+func UploadAllEmojis(folder, token string) error {
+	files, err := ioutil.ReadDir("./" + folder)
+	if err != nil {
+		return err
+	}
+	api := slack.New(token)
+	for _, f := range files {
+		fmt.Sprintf("Uploading %s", f.Name())
+		err = uploadEmoji(filepath.Join(folder, f.Name()), api)
+		if err != nil {
+			return err
+		}
+	}
+	return err
 }

@@ -8,6 +8,11 @@ import (
 	"path/filepath"
 )
 
+func GetFileNameWithoutExtension(filename string) string {
+	extension := filepath.Ext(filename)
+	return filename[0 : len(filename)-len(extension)]
+}
+
 func RemoveFolderContents(dir string) error {
 	d, err := os.Open(dir)
 	if err != nil {

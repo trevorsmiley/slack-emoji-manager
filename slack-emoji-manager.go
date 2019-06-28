@@ -28,5 +28,22 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+	case "upload":
+		filename := os.Args[2]
+		token = os.Args[3]
+		fmt.Println("Uploading emoji")
+		err := emoji.UploadEmoji(filename, token)
+		if err != nil {
+			panic(err)
+		}
+	case "upload-all":
+		folder := os.Args[2]
+		token = os.Args[3]
+		fmt.Println("Uploading emoji")
+		err := emoji.UploadAllEmojis(folder, token)
+		if err != nil {
+			panic(err)
+		}
 	}
+
 }

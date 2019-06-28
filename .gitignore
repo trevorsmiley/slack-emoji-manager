@@ -11,3 +11,6 @@ slack-emoji-manager
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Downloaded emojis
+/emojis
