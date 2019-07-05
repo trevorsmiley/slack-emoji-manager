@@ -26,6 +26,40 @@ type Alias struct {
 	alias string
 }
 
+func (e *Emoji) Slack() string {
+	return toSlack(e.name)
+}
+
+func (e *Emoji) String() string {
+	return fmt.Sprintf("%s - %s", e.name, e.url)
+}
+
+func (a *Alias) String() string {
+	return fmt.Sprintf("%s - %s", a.name, a.alias)
+}
+
+func toSlack(name string) string {
+	return fmt.Sprintf(":%s:", name)
+}
+
+func EmojiToSlack(emojis []string) string {
+	p := make([]string, 0)
+	for _, emoji := range emojis {
+		p = append(p, toSlack(emoji))
+	}
+	sort.Strings(p)
+	return strings.Join(p, " ")
+}
+
+func PrintEmojiListForSlack(emojis map[string]Emoji) string {
+	sortedEmojis := make([]string, 0)
+	for _, emoji := range emojis {
+		sortedEmojis = append(sortedEmojis, emoji.Slack())
+	}
+	sort.Strings(sortedEmojis)
+	return strings.Join(sortedEmojis, " ")
+}
+
 func GetEmojis(token string, download bool) error {
 	api := slack.New(token)
 	emojis, err := api.GetEmoji()
@@ -166,30 +200,35 @@ func isAlias(uri string) bool {
 	return strings.HasPrefix(uri, "alias")
 }
 
-func UploadEmoji(filename, token string) error {
+func UploadEmoji(filename, token string) (string, error) {
 	api := slack.New(token)
 
 	return uploadEmoji(filename, api)
 
 }
 
-func uploadEmoji(filename string, api *slack.Client) error {
+func uploadEmoji(filename string, api *slack.Client) (string, error) {
 	emojiName := utils.GetFileNameWithoutExtension(filepath.Base(filename))
-	return api.AddEmoji(filename, emojiName)
+
+	return emojiName, api.AddEmoji(filename, emojiName)
 }
 
-func UploadAllEmojis(folder, token string) error {
+func UploadAllEmojis(folder, token string) ([]string, error) {
+	emojis := make([]string, 0)
 	files, err := ioutil.ReadDir("./" + folder)
 	if err != nil {
-		return err
+		return emojis, err
 	}
+
 	api := slack.New(token)
 	for _, f := range files {
 		fmt.Sprintf("Uploading %s", f.Name())
-		err = uploadEmoji(filepath.Join(folder, f.Name()), api)
+
+		name, err := uploadEmoji(filepath.Join(folder, f.Name()), api)
 		if err != nil {
-			return err
+			return emojis, err
 		}
+		emojis = append(emojis, name)
 	}
-	return err
+	return emojis, err
 }

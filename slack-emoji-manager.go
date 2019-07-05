@@ -32,18 +32,22 @@ func main() {
 		filename := os.Args[2]
 		token = os.Args[3]
 		fmt.Println("Uploading emoji")
-		err := emoji.UploadEmoji(filename, token)
+		name, err := emoji.UploadEmoji(filename, token)
 		if err != nil {
 			panic(err)
 		}
+		fmt.Println("*New :slack: emoji*")
+		fmt.Println(emoji.EmojiToSlack([]string{name}))
 	case "upload-all":
 		folder := os.Args[2]
 		token = os.Args[3]
 		fmt.Println("Uploading emoji")
-		err := emoji.UploadAllEmojis(folder, token)
+		emojis, err := emoji.UploadAllEmojis(folder, token)
 		if err != nil {
 			panic(err)
 		}
+		fmt.Println("*New :slack: emojis*")
+		fmt.Println(emoji.EmojiToSlack(emojis))
 	}
 
 }
