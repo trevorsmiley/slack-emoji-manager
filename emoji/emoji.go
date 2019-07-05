@@ -222,7 +222,10 @@ func UploadAllEmojis(folder, token string) ([]string, error) {
 
 	api := slack.New(token)
 	for _, f := range files {
-		fmt.Sprintf("Uploading %s", f.Name())
+		if !utils.HasImageExtension(f.Name()) {
+			continue
+		}
+		fmt.Printf("Uploading %s\n", f.Name())
 
 		name, err := uploadEmoji(filepath.Join(folder, f.Name()), api)
 		if err != nil {

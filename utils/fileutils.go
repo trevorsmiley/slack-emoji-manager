@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func GetFileNameWithoutExtension(filename string) string {
@@ -70,4 +71,15 @@ func CreateOrClearDir(dir string) error {
 	} else {
 		return RemoveFolderContents(dir)
 	}
+}
+
+func HasImageExtension(filename string) bool {
+	ext := strings.ToLower(strings.TrimPrefix(filepath.Ext(filename), "."))
+	imageExtensions := []string{"png", "gif", "jpg", "jpeg"}
+	for _, imageExtension := range imageExtensions {
+		if imageExtension == ext {
+			return true
+		}
+	}
+	return false
 }
