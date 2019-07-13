@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/nlopes/slack"
+	"github.com/trevorsmiley/fileutils"
 )
 
 const (
@@ -84,7 +85,7 @@ func GetEmojis(token string, download bool) error {
 	fmt.Println()
 
 	if download {
-		err := utils.CreateOrClearDir(emojiDir)
+		err := fileutils.CreateOrClearDir(emojiDir)
 		if err != nil {
 			return err
 		}
@@ -132,7 +133,7 @@ func (emoji *Emoji) Download(dir string) error {
 		return err
 	}
 	newFile := fmt.Sprintf("%s%s", emoji.name, ext)
-	err = utils.DownloadFile(filepath.Join(dir, newFile), emoji.url)
+	err = fileutils.DownloadFile(filepath.Join(dir, newFile), emoji.url)
 	if err != nil {
 		return err
 	}
@@ -157,7 +158,7 @@ func (emoji *Emoji) GetFileExtension() (string, error) {
 //		return err
 //	}
 //	newFile := fmt.Sprintf("%s%s", name, ext)
-//	err = utils.DownloadFile(filepath.Join(emojiDir, newFile), emojiURL)
+//	err = fileutils.DownloadFile(filepath.Join(emojiDir, newFile), emojiURL)
 //	if err != nil {
 //		return err
 //	}
@@ -208,7 +209,7 @@ func UploadEmoji(filename, token string) (string, error) {
 }
 
 func uploadEmoji(filename string, api *slack.Client) (string, error) {
-	emojiName := utils.GetFileNameWithoutExtension(filepath.Base(filename))
+	emojiName := fileutils.GetFileNameWithoutExtension(filepath.Base(filename))
 
 	return emojiName, api.AddEmoji(filename, emojiName)
 }
